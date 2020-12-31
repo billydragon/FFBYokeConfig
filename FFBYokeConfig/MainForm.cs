@@ -396,9 +396,13 @@ namespace FFBYokeConfig
                     if (tboxPIDArray[idx, j].Name == txtbox.Name)
                     {
                          pos = j;
+                    if (txtbox.Text == "")
+                        txtbox.Text = "0.00";
                     Pids.SetValue(float.Parse(tboxPIDArray[idx, j].Text), idx, j);
                 }
                 }
+            if (!serialPort1.IsOpen)
+                return;
             if (chkBoxAutoSave.Checked)
                 Write_Pids_Memory(idx, pos, (float)Pids.GetValue(idx, pos));
                 Log(ListBoxLog.Level.Warning, "Update " + PIDName.ElementAt(pos) + AxisName.ElementAt(idx) + ": " + Pids.GetValue(idx, pos).ToString());
@@ -408,7 +412,7 @@ namespace FFBYokeConfig
         private void GainsArrayKeyPress(object sender, KeyPressEventArgs e)
         {
             int idx = 0, pos = 0;
-
+            
             NumericUpDown numbox = sender as NumericUpDown;
 
             if (e.KeyChar != (char)Keys.Enter)
@@ -432,6 +436,9 @@ namespace FFBYokeConfig
                     Gains.SetValue((byte)numUDGainsArray[idx, j].Value, idx, j);
                 }
             }
+
+            if (!serialPort1.IsOpen)
+                return;
             if (chkBoxAutoSave.Checked)
             {
                 Write_Gains_Memory(idx, pos, (byte)Gains.GetValue(idx, pos));
@@ -453,7 +460,11 @@ namespace FFBYokeConfig
                     {
                       
                        Gains.SetValue((byte)numUDGainsArray[i, j].Value,i,j);
-                        if(chkBoxAutoSave.Checked)
+
+                        if (!serialPort1.IsOpen)
+                            return;
+
+                        if (chkBoxAutoSave.Checked)
                         {
                             Write_Gains_Memory(i, j, (byte)Gains.GetValue(i, j));
                            // Log(ListBoxLog.Level.Debug, "Auto Update " + GainsName.ElementAt(j) + AxisName.ElementAt(i) + ": " + Gains.GetValue(i, j).ToString());
@@ -478,9 +489,12 @@ namespace FFBYokeConfig
                     if (tboxPIDArray[i, j].Name == tb.Name)
                     {
                         if (tb.Text == "")
-                            tb.Text = "0";
+                            tb.Text = "0.00";
                         Pids.SetValue(float.Parse(tboxPIDArray[i, j].Text),i,j);
-                        if(chkBoxAutoSave.Checked)
+
+                        if (!serialPort1.IsOpen)
+                            return;
+                        if (chkBoxAutoSave.Checked)
                             Write_Pids_Memory(i, j, (float)Pids.GetValue(i, j));
 
                        // float p = (float)Pids.GetValue(i, j);
@@ -539,23 +553,26 @@ namespace FFBYokeConfig
             serialPort1.Write(cmd, 0, cmd.Length);
 
             Log(ListBoxLog.Level.Send, "Write " + GainsName.ElementAt(pos) + AxisName.ElementAt(idx) + ": " + _gain.ToString() + " to Memory");
-            Thread.Sleep((int)numUD_DELAYS.Value);
+            //Thread.Sleep((int)numUD_DELAYS.Value);
         }
 
         private void Write_SYSCONTROL_Memory()
         {
             if (!serialPort1.IsOpen)
                 return;
-            byte[] cmd = new byte[3];
+            byte[] cmd = new byte[6];
             cmd[0] = (byte)COMMAND_TYPE.Write_Memory;
             cmd[1] = (byte)DATA_TYPE.System_Memory;
-            cmd[2] = ConvertBoolArrayToByte(system_control);
+            cmd[2] = 0;
+            cmd[3] = 0;
+            cmd[4] = 1;
+            cmd[5] = ConvertBoolArrayToByte(system_control);
 
             serialPort1.Write(cmd, 0, cmd.Length);
 
             Log(ListBoxLog.Level.Send, "Write System Control config");
 
-            Thread.Sleep((int)numUD_DELAYS.Value);
+            //Thread.Sleep((int)numUD_DELAYS.Value);
         }
 
 
@@ -576,13 +593,13 @@ namespace FFBYokeConfig
             serialPort1.Write(bOut, 0, bOut.Length);
             
             Log(ListBoxLog.Level.Send, "Write " + PIDName.ElementAt(pos) + AxisName.ElementAt(idx) + ": " + _pid.ToString() + " to Memory");
-            Thread.Sleep((int)numUD_DELAYS.Value);
+            //Thread.Sleep((int)numUD_DELAYS.Value);
         }
 
         private void serialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             int head, idx, cmdlen, cmd, pos;
-            
+            String source;
             while (serialPort1.BytesToRead > 0)
             {
                 Thread.Sleep((int)numUD_DELAYS.Value);
@@ -593,9 +610,11 @@ namespace FFBYokeConfig
 
                         switch (cmd)        //2
                         {
-                            case (byte)DATA_TYPE.Gains_Memory:            
-                            case (byte)DATA_TYPE.Gains_Eeprom:   
-                            idx = serialPort1.ReadByte();               // 3 Axis index
+                            case (byte)DATA_TYPE.Gains_Memory:
+                            
+                            case (byte)DATA_TYPE.Gains_Eeprom:
+                                source = DataTypeName.ElementAt(cmd - 1);
+                                idx = serialPort1.ReadByte();               // 3 Axis index
                                 pos = serialPort1.ReadByte();               // 4
                                 cmdlen = serialPort1.ReadByte();            // 5 lenght of data
 
@@ -603,13 +622,15 @@ namespace FFBYokeConfig
                                 {
                                   byte data = (byte)serialPort1.ReadByte();
                                     Gains.SetValue(data, idx, pos + j);
-                                    Log(ListBoxLog.Level.Receive, "Received " + DataTypeName.ElementAt(cmd -1) + " : " + GainsName.ElementAt(pos + j) + AxisName.ElementAt(idx) + " = " + Gains.GetValue(idx, pos + j).ToString());
+                                    Log(ListBoxLog.Level.Receive, "Received " + source + " : " + GainsName.ElementAt(pos + j) + AxisName.ElementAt(idx) + " = " + Gains.GetValue(idx, pos + j).ToString());
                                 }
                                 break;
 
-                            case (byte)DATA_TYPE.Pids_Memory:  
+                            case (byte)DATA_TYPE.Pids_Memory:
+                                   
                             case (byte)DATA_TYPE.Pids_Eeprom:
-                                idx = serialPort1.ReadByte();               //3 Axis index
+                                    source = DataTypeName.ElementAt(cmd - 1);
+                                    idx = serialPort1.ReadByte();               //3 Axis index
                                 pos = serialPort1.ReadByte();               // 4
                                 cmdlen = (serialPort1.ReadByte() / 4);      //5 lenght of data
 
@@ -624,14 +645,17 @@ namespace FFBYokeConfig
                                     float val = System.BitConverter.ToSingle(f, 0);
                                     Pids.SetValue(val, idx, (pos + j));
 
-                                    Log(ListBoxLog.Level.Receive, "Received " + DataTypeName.ElementAt(cmd -1) +  " : " + PIDName.ElementAt(pos + j) + AxisName.ElementAt(idx) + " = " + val.ToString());
+                                    Log(ListBoxLog.Level.Receive, "Received " + source +  " : " + PIDName.ElementAt(pos + j) + AxisName.ElementAt(idx) + " = " + val.ToString());
                                 }
 
                                 break;
                             case (byte)DATA_TYPE.System_Memory:
                             case (byte)DATA_TYPE.System_Eeprom:
-                                         byte b = (byte)serialPort1.ReadByte();
-                                        system_control = ConvertByteToBoolArray(b);
+                                    idx = serialPort1.ReadByte();               //3 Axis index
+                                    pos = serialPort1.ReadByte();               // 4
+                                    cmdlen = (serialPort1.ReadByte() / 4);      //5 lenght of data
+                                    byte b = (byte)serialPort1.ReadByte();
+                                    system_control = ConvertByteToBoolArray(b);
                             Log(ListBoxLog.Level.Receive, "Received System control byte: " + b.ToString());
 
                             break;
@@ -695,10 +719,11 @@ namespace FFBYokeConfig
 
         private void btn_RESET_DEFAULT_Click(object sender, EventArgs e)
         {
+
             byte[] cmd = new byte[2];
             cmd[0] = (byte)COMMAND_TYPE.Control;
             cmd[1] = (byte)DATA_TYPE.Reset_Default;
-
+            
             serialPort1.Write(cmd, 0, cmd.Length);
 
             Log(ListBoxLog.Level.Debug, "Reset Default Configs.");
@@ -766,7 +791,7 @@ namespace FFBYokeConfig
             while (true)
             {
                 //Log(Level.Info, "A info level message from thread # {0,0000}", number++);
-                Thread.Sleep(2000);
+                Thread.Sleep(1000);
             }
         }
 

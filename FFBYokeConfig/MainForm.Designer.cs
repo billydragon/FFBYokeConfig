@@ -47,11 +47,11 @@
             this.labelInfo = new System.Windows.Forms.Label();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.chkBoxAutoCalibration = new System.Windows.Forms.CheckBox();
             this.chkBoxMotorInv_Y = new System.Windows.Forms.CheckBox();
             this.chkBoxMotorInv_X = new System.Windows.Forms.CheckBox();
             this.chkBoxSwapXYfoces = new System.Windows.Forms.CheckBox();
             this.gbPID = new System.Windows.Forms.GroupBox();
-            this.chkBoxAutoCalibration = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUD_DELAYS)).BeginInit();
             this.gbGains.SuspendLayout();
@@ -90,7 +90,7 @@
             this.numUD_DELAYS.TabIndex = 2;
             this.numUD_DELAYS.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.numUD_DELAYS.Value = new decimal(new int[] {
-            25,
+            5,
             0,
             0,
             0});
@@ -258,6 +258,17 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Option";
             // 
+            // chkBoxAutoCalibration
+            // 
+            this.chkBoxAutoCalibration.AutoSize = true;
+            this.chkBoxAutoCalibration.Location = new System.Drawing.Point(150, 38);
+            this.chkBoxAutoCalibration.Name = "chkBoxAutoCalibration";
+            this.chkBoxAutoCalibration.Size = new System.Drawing.Size(100, 17);
+            this.chkBoxAutoCalibration.TabIndex = 13;
+            this.chkBoxAutoCalibration.Text = "Auto Calibration";
+            this.chkBoxAutoCalibration.UseVisualStyleBackColor = true;
+            this.chkBoxAutoCalibration.CheckedChanged += new System.EventHandler(this.chkBoxAutoCalibration_CheckedChanged);
+            // 
             // chkBoxMotorInv_Y
             // 
             this.chkBoxMotorInv_Y.AutoSize = true;
@@ -299,17 +310,6 @@
             this.gbPID.TabIndex = 50;
             this.gbPID.TabStop = false;
             this.gbPID.Text = "Gains & PIDs";
-            // 
-            // chkBoxAutoCalibration
-            // 
-            this.chkBoxAutoCalibration.AutoSize = true;
-            this.chkBoxAutoCalibration.Location = new System.Drawing.Point(150, 38);
-            this.chkBoxAutoCalibration.Name = "chkBoxAutoCalibration";
-            this.chkBoxAutoCalibration.Size = new System.Drawing.Size(100, 17);
-            this.chkBoxAutoCalibration.TabIndex = 13;
-            this.chkBoxAutoCalibration.Text = "Auto Calibration";
-            this.chkBoxAutoCalibration.UseVisualStyleBackColor = true;
-            this.chkBoxAutoCalibration.CheckedChanged += new System.EventHandler(this.chkBoxAutoCalibration_CheckedChanged);
             // 
             // MainForm
             // 
