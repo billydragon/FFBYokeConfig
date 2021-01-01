@@ -52,10 +52,13 @@
             this.chkBoxMotorInv_X = new System.Windows.Forms.CheckBox();
             this.chkBoxSwapXYfoces = new System.Windows.Forms.CheckBox();
             this.gbPID = new System.Windows.Forms.GroupBox();
+            this.labelMotorDIR_Delay = new System.Windows.Forms.Label();
+            this.numUDMotor_Dir_Delay = new System.Windows.Forms.NumericUpDown();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUD_DELAYS)).BeginInit();
             this.gbGains.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numUDMotor_Dir_Delay)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -246,6 +249,8 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.numUDMotor_Dir_Delay);
+            this.groupBox3.Controls.Add(this.labelMotorDIR_Delay);
             this.groupBox3.Controls.Add(this.chkBoxAutoCalibration);
             this.groupBox3.Controls.Add(this.chkBoxMotorInv_Y);
             this.groupBox3.Controls.Add(this.chkBoxAutoSave);
@@ -294,10 +299,10 @@
             // chkBoxSwapXYfoces
             // 
             this.chkBoxSwapXYfoces.AutoSize = true;
-            this.chkBoxSwapXYfoces.Location = new System.Drawing.Point(6, 61);
+            this.chkBoxSwapXYfoces.Location = new System.Drawing.Point(150, 61);
             this.chkBoxSwapXYfoces.Name = "chkBoxSwapXYfoces";
             this.chkBoxSwapXYfoces.Size = new System.Drawing.Size(105, 17);
-            this.chkBoxSwapXYfoces.TabIndex = 11;
+            this.chkBoxSwapXYfoces.TabIndex = 14;
             this.chkBoxSwapXYfoces.Text = "Swap XY_forces";
             this.chkBoxSwapXYfoces.UseVisualStyleBackColor = true;
             this.chkBoxSwapXYfoces.CheckedChanged += new System.EventHandler(this.chkBoxSwapAxis_CheckedChanged);
@@ -310,6 +315,29 @@
             this.gbPID.TabIndex = 50;
             this.gbPID.TabStop = false;
             this.gbPID.Text = "Gains & PIDs";
+            // 
+            // labelMotorDIR_Delay
+            // 
+            this.labelMotorDIR_Delay.AutoSize = true;
+            this.labelMotorDIR_Delay.Location = new System.Drawing.Point(3, 61);
+            this.labelMotorDIR_Delay.Name = "labelMotorDIR_Delay";
+            this.labelMotorDIR_Delay.Size = new System.Drawing.Size(71, 13);
+            this.labelMotorDIR_Delay.TabIndex = 15;
+            this.labelMotorDIR_Delay.Text = "M.DIR Delay:";
+            // 
+            // numUDMotor_Dir_Delay
+            // 
+            this.numUDMotor_Dir_Delay.Location = new System.Drawing.Point(80, 58);
+            this.numUDMotor_Dir_Delay.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.numUDMotor_Dir_Delay.Name = "numUDMotor_Dir_Delay";
+            this.numUDMotor_Dir_Delay.Size = new System.Drawing.Size(54, 20);
+            this.numUDMotor_Dir_Delay.TabIndex = 16;
+            this.numUDMotor_Dir_Delay.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.numUDMotor_Dir_Delay.ValueChanged += new System.EventHandler(this.numUDMotor_Dir_Delay_ValueChanged);
             // 
             // MainForm
             // 
@@ -335,6 +363,7 @@
             this.gbGains.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numUDMotor_Dir_Delay)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -364,5 +393,7 @@
         private System.Windows.Forms.NumericUpDown numUD_DELAYS;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox chkBoxAutoCalibration;
+        private System.Windows.Forms.Label labelMotorDIR_Delay;
+        private System.Windows.Forms.NumericUpDown numUDMotor_Dir_Delay;
     }
 }
