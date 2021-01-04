@@ -80,7 +80,7 @@ namespace FFBYokeConfig
             Reset_Default
         };
 
-        public enum SYS_CTRL_NAME
+        public enum SYS_CONFIG_ENUM
         {
              Motor_Inv_X = 0,
              Motor_Inv_Y,
@@ -90,6 +90,18 @@ namespace FFBYokeConfig
              Reserv_1,
              Reserv_2,
              Reserv_3
+        };
+
+        public List<string> Sys_Config_Name = new List<string>
+        {
+            "Motor Inv X",
+            "Motor Inv Y",
+            "Swap XY forces",
+            "Auto Calibration",
+            "Motor DIR Delay",
+            "Reserv 1",
+            "Reserv 2",
+            "Reserv 3"
         };
 
         public enum COMMAND_TYPE: byte
@@ -544,10 +556,9 @@ namespace FFBYokeConfig
             cmd[5] = _data;                           //ConvertBoolArrayToByte(system_flags);
 
             serialPort1.Write(cmd, 0, cmd.Length);
-            String s = "Write System Config Byte [";
-            if (_index == 0)
-                   s = "Write System Flags Byte  [";
-            Log(ListBoxLog.Level.Send, s + _index.ToString() + "]: " + _data.ToString());
+            String s = "Write " + Sys_Config_Name.ElementAt(_index) + " [";
+            
+            Log(ListBoxLog.Level.Send, s + _index.ToString() +"]:" + _data.ToString());
 
             //Thread.Sleep((int)numUD_DELAYS.Value);
         }
@@ -631,13 +642,12 @@ namespace FFBYokeConfig
                                    
                                     for (int j = 0; j < cmdlen; j++)
                                     {
+                                        int data_index = pos + j; 
                                         byte data = (byte)serialPort1.ReadByte();
-                                        system_configs[pos + j] = data;
-                                    String  s = "Received System Config Byte [";
-                                    if (pos == 0)
-                                            s = "Received System Flags Byte  [";
-
-                                    Log(ListBoxLog.Level.Receive, s + pos.ToString() +"]: " + data.ToString());
+                                        system_configs[data_index] = data;
+                                    String  s = "Received " + Sys_Config_Name.ElementAt(data_index) + " [";
+                                    
+                                    Log(ListBoxLog.Level.Receive, s + data_index.ToString() +"]: " + data.ToString());
                                     }
                                       
                             break;
@@ -681,11 +691,11 @@ namespace FFBYokeConfig
 
                 }
             }
-            chkBoxMotorInv_X.Checked = Convert.ToBoolean(system_configs[(byte)SYS_CTRL_NAME.Motor_Inv_X]);
-            chkBoxMotorInv_Y.Checked = Convert.ToBoolean(system_configs[(byte)SYS_CTRL_NAME.Motor_Inv_Y]);
-            chkBoxSwapXYfoces.Checked = Convert.ToBoolean(system_configs[(byte)SYS_CTRL_NAME.Swap_XYforces]);
-            chkBoxAutoCalibration.Checked = Convert.ToBoolean(system_configs[(byte)SYS_CTRL_NAME.Auto_Calibration]);
-            numUDMotor_Dir_Delay.Value = system_configs[(byte)SYS_CTRL_NAME.Motor_DIR_Delay];
+            chkBoxMotorInv_X.Checked = Convert.ToBoolean(system_configs[(byte)SYS_CONFIG_ENUM.Motor_Inv_X]);
+            chkBoxMotorInv_Y.Checked = Convert.ToBoolean(system_configs[(byte)SYS_CONFIG_ENUM.Motor_Inv_Y]);
+            chkBoxSwapXYfoces.Checked = Convert.ToBoolean(system_configs[(byte)SYS_CONFIG_ENUM.Swap_XYforces]);
+            chkBoxAutoCalibration.Checked = Convert.ToBoolean(system_configs[(byte)SYS_CONFIG_ENUM.Auto_Calibration]);
+            numUDMotor_Dir_Delay.Value = system_configs[(byte)SYS_CONFIG_ENUM.Motor_DIR_Delay];
         }
 
         private void btn_READ_YOKE_Click(object sender, EventArgs e)
@@ -920,27 +930,27 @@ namespace FFBYokeConfig
 
         private void chkBoxMotorInv_X_CheckedChanged(object sender, EventArgs e)
         {
-            int index = (int)SYS_CTRL_NAME.Motor_Inv_X;
+            int index = (int)SYS_CONFIG_ENUM.Motor_Inv_X;
             system_configs[index] = Convert.ToByte(chkBoxMotorInv_X.Checked);
-            Log(ListBoxLog.Level.Warning, "Set Motor Invert X: " + system_configs[index].ToString());
+           // Log(ListBoxLog.Level.Warning, "Set Motor Invert X: " + system_configs[index].ToString());
             if (chkBoxAutoSave.Checked)
                 Write_SYSCONTROL_Memory(index, system_configs[index]);
         }
 
         private void chkBoxMotorInv_Y_CheckedChanged(object sender, EventArgs e)
         {
-            int index = (int)SYS_CTRL_NAME.Motor_Inv_Y;
+            int index = (int)SYS_CONFIG_ENUM.Motor_Inv_Y;
             system_configs[index] = Convert.ToByte(chkBoxMotorInv_Y.Checked);
-            Log(ListBoxLog.Level.Warning, "Set Motor Invert Y: " + system_configs[index].ToString());
+            //Log(ListBoxLog.Level.Warning, "Set Motor Invert Y: " + system_configs[index].ToString());
             if (chkBoxAutoSave.Checked)
                 Write_SYSCONTROL_Memory(index, system_configs[index]);
         }
 
         private void chkBoxSwapAxis_CheckedChanged(object sender, EventArgs e)
         {
-            int index = (int)SYS_CTRL_NAME.Swap_XYforces;
+            int index = (int)SYS_CONFIG_ENUM.Swap_XYforces;
             system_configs[index] = Convert.ToByte(chkBoxSwapXYfoces.Checked);
-            Log(ListBoxLog.Level.Warning, "Set Swap XY Forces: " + system_configs[index].ToString());
+            //Log(ListBoxLog.Level.Warning, "Set Swap XY Forces: " + system_configs[index].ToString());
             if (chkBoxAutoSave.Checked)
                 Write_SYSCONTROL_Memory(index, system_configs[index]);
         }
@@ -952,9 +962,9 @@ namespace FFBYokeConfig
 
         private void chkBoxAutoCalibration_CheckedChanged(object sender, EventArgs e)
         {
-            int index = (int)SYS_CTRL_NAME.Auto_Calibration;
+            int index = (int)SYS_CONFIG_ENUM.Auto_Calibration;
             system_configs[index] = Convert.ToByte(chkBoxAutoCalibration.Checked);
-            Log(ListBoxLog.Level.Warning, "Set Auto Calibration: " + system_configs[index].ToString());
+           // Log(ListBoxLog.Level.Warning, "Set Auto Calibration: " + system_configs[index].ToString());
             if (chkBoxAutoSave.Checked)
                 Write_SYSCONTROL_Memory(index, system_configs[index]);
         }
@@ -962,9 +972,9 @@ namespace FFBYokeConfig
 
         private void numUDMotor_Dir_Delay_ValueChanged(object sender, EventArgs e)
         {
-            int index = (int)SYS_CTRL_NAME.Motor_DIR_Delay;
+            int index = (int)SYS_CONFIG_ENUM.Motor_DIR_Delay;
             system_configs[index] = (byte)numUDMotor_Dir_Delay.Value;
-            Log(ListBoxLog.Level.Warning, "Set Motor DIR Delays : " + system_configs[index].ToString());
+           // Log(ListBoxLog.Level.Warning, "Set Motor DIR Delays : " + system_configs[index].ToString());
             if (chkBoxAutoSave.Checked)
                 Write_SYSCONTROL_Memory(index, system_configs[index]);
 
