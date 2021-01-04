@@ -690,6 +690,8 @@ namespace FFBYokeConfig
 
         private void btn_READ_YOKE_Click(object sender, EventArgs e)
         {
+            if (serialPort1.IsOpen == false)
+                return;
             byte[] cmd = new byte[2];
             cmd[0] = (byte)COMMAND_TYPE.Read_Memory;
             cmd[1] = (byte)DATA_TYPE.All_Memory;
@@ -702,7 +704,8 @@ namespace FFBYokeConfig
 
         private void btn_RESET_DEFAULT_Click(object sender, EventArgs e)
         {
-
+            if (serialPort1.IsOpen == false)
+                return;
             byte[] cmd = new byte[2];
             cmd[0] = (byte)COMMAND_TYPE.Control;
             cmd[1] = (byte)DATA_TYPE.Reset_Default;
@@ -728,6 +731,8 @@ namespace FFBYokeConfig
         
         private void btn_WRITE_YOKE_Click(object sender, EventArgs e)
         {
+            if (serialPort1.IsOpen == false)
+                return;
             Log(ListBoxLog.Level.Warning, "Writing Configs to Memory...");
             for (int idx = 0; idx < Gains.GetLength(0); idx++)
             {
@@ -761,12 +766,16 @@ namespace FFBYokeConfig
 
         private void btn_SAVE_EEPROM_Click(object sender, EventArgs e)
         {
+            if (serialPort1.IsOpen == false)
+                return;
             Send_Save_Eeprom();
 
         }
 
         private void btn_LOAD_EEPROM_Click(object sender, EventArgs e)
         {
+            if (serialPort1.IsOpen == false)
+                return;
             Command_LOAD_USER_EEPROM();
         }
 
